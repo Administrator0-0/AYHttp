@@ -1,11 +1,8 @@
 package com.example.ayhttp;
 
-import java.net.Socket;
-
 public class Request {
 
     final Headers header;
-    private Socket socket;
     String[] request;
 
     private Request(Headers header){
@@ -17,6 +14,7 @@ public class Request {
 
         private Headers header;
         private String url;
+        private int port = 80;
         private String type = "GET";
 
         public Builder get(){
@@ -34,14 +32,19 @@ public class Request {
             return this;
         }
 
+        public Builder port(int port){
+            this.port = port;
+            return this;
+        }
+
         public Builder header(String key, String value){
-            if (header == null) header = new Headers(type, url);
+            if (header == null) header = new Headers(type, url, port);
             header.addHeader(key, value);
             return this;
         }
 
         public Request build(){
-            if (header == null) header = new Headers(type, url);
+            if (header == null) header = new Headers(type, url, port);
             return new Request(header);
         }
     }

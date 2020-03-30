@@ -2,12 +2,14 @@ package com.example.ayhttp;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import com.example.ayhttp.Call.AsyncCall;
+import com.example.ayhttp.Call.SyncCall;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class Dispatcher {
+class Dispatcher {
     private int maxRequests = 64;
     private final Deque<AsyncCall> readyAsyncCalls = new ArrayDeque<>();
     private final Deque<AsyncCall> runningAsyncCalls = new ArrayDeque<>();
@@ -34,5 +36,19 @@ public class Dispatcher {
 
     synchronized void executed(SyncCall call) {
         runningSyncCalls.add(call);
+    }
+
+    void finished(SyncCall call){
+        finished(runningSyncCalls, call, false);
+    }
+
+    void finished(AsyncCall call){
+        finished(runningAsyncCalls, call, false);
+    }
+
+    private <T> void finished(Deque<T> calls, T call, boolean promoteCalls){
+        synchronized (this){
+            calls.remove(call);
+        }
     }
 }

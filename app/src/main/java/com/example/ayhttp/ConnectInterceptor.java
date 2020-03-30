@@ -14,8 +14,9 @@ class ConnectInterceptor implements Interceptor{
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request request  = chain.request();
-        HttpCodec httpCodec = new HttpCodec();
-        Connection connection = new Connection();
-        return chain.proceed(request, httpCodec, connection);
+        StreamAllocation streamAllocation = chain.streamAllocation();
+        HttpCodec httpCodec = streamAllocation.newStream(client, chain);
+        Connection connection = streamAllocation.connection();
+        return chain.proceed(request,httpCodec, chain.streamAllocation(), connection);
     }
 }

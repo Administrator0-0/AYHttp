@@ -12,6 +12,7 @@ public class AYHttpClient {
     int connectTimeout;
     int readTimeout;
     int writeTimeout;
+    ConnectionPool connectionPool;
 
 
     AYHttpClient(Builder builder){
