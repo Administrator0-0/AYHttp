@@ -7,7 +7,7 @@ class ConnectInterceptor implements Interceptor{
 
     private AYHttpClient client;
 
-    public ConnectInterceptor(AYHttpClient client){
+    ConnectInterceptor(AYHttpClient client){
         this.client = client;
     }
 
@@ -17,6 +17,6 @@ class ConnectInterceptor implements Interceptor{
         StreamAllocation streamAllocation = chain.streamAllocation();
         HttpCodec httpCodec = streamAllocation.newStream(client, chain);
         Connection connection = streamAllocation.connection();
-        return chain.proceed(request,httpCodec, chain.streamAllocation(), connection);
+        return chain.proceed(request, httpCodec, chain.streamAllocation(), connection);
     }
 }

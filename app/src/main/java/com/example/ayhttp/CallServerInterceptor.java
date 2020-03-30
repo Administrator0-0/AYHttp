@@ -8,6 +8,9 @@ public class CallServerInterceptor implements Interceptor {
         Request request = chain.request();
         HttpCodec httpCodec = chain.httpCodec();
         httpCodec.writeHeader(request);
+        //TODO write requestBody
+        httpCodec.finishRequest();
+
 
         return null;
     }

@@ -3,27 +3,30 @@ package com.example.ayhttp;
 class Response {
 
     Request request;
+    ResponseBody body;
 
     private Response(Builder builder){
         this.request = builder.request;
     }
 
-    public Request getRequest() {
+    Request getRequest() {
         return request;
     }
 
 
-
-    public class Builder{
+    class Builder{
 
         Request request;
+        Headers headers;
+        int code = -1;
 
-        public Builder request(Request request){
+
+        Builder request(Request request){
             this.request = request;
             return this;
         }
 
-        public Response build(){
+        Response build(){
             return new Response(this);
         }
     }
