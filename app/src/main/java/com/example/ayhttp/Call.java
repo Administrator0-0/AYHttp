@@ -5,19 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Call{
-
     private Request request;
     private AYHttpClient mClient;
     private boolean executed;
     private RetryAndFollowUpInterceptor retryAndFollowUpInterceptor;
 
-    public Call(Request request, AYHttpClient client){
+    Call(Request request, AYHttpClient client){
         this.request = request;
         this.mClient = client;
         retryAndFollowUpInterceptor = new RetryAndFollowUpInterceptor(client);
     }
 
-    public void enquene(Callback callback){
+    public void enqueue(Callback callback){
         synchronized (this){
             if (executed) throw new IllegalStateException("Already executed");
             executed = true;
@@ -63,7 +62,7 @@ public class Call{
 
     final class SyncCall {
 
-        public Response execute(){
+        Response execute(){
             synchronized (this){
                 if (executed) throw new IllegalStateException("Already executed");
                 executed = true;

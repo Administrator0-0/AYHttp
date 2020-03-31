@@ -9,6 +9,7 @@ public class ResponseBody implements Closeable {
     private final InputStream in;
     private final String contentTypeString;
     private final long contentLength;
+    private boolean closed;
 
     ResponseBody(InputStream in, String contentTypeString, long contentLength){
         this.in = in;
@@ -17,20 +18,21 @@ public class ResponseBody implements Closeable {
     }
 
 
-    String contentTypeString(){
+    public String contentTypeString(){
         return contentTypeString;
     }
 
-    long contentLength(){
+    public long contentLength(){
         return contentLength;
     }
 
-    InputStream in(){
+    public InputStream in(){
         return in;
     }
 
     @Override
     public void close() throws IOException {
-
+        closed = true;
+        in.close();
     }
 }

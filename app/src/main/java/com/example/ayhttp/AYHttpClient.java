@@ -6,21 +6,25 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class AYHttpClient {
-
-    Dispatcher dispatcher;
+    final Dispatcher dispatcher;
     final List<Interceptor> interceptors;
-    int connectTimeout;
-    int readTimeout;
-    int writeTimeout;
-    ConnectionPool connectionPool;
+    final int connectTimeout;
+    final int readTimeout;
+    final int writeTimeout;
+    final ConnectionPool connectionPool;
 
 
-    AYHttpClient(Builder builder){
+    public AYHttpClient(){
+        this(new Builder());
+    }
+
+    private AYHttpClient(Builder builder){
         this.dispatcher = builder.dispatcher;
         this.interceptors = builder.interceptors;
         this.connectTimeout = builder.connectTimeout;
         this.readTimeout = builder.readTimeout;
         this.writeTimeout = builder.writeTimeout;
+        this.connectionPool = builder.connectionPool;
     }
 
     public Call newCall(Request request){
@@ -33,8 +37,9 @@ public class AYHttpClient {
         int connectTimeout;
         int readTimeout;
         int writeTimeout;
+        ConnectionPool connectionPool;
 
-        public Builder(){
+        Builder(){
             dispatcher = new Dispatcher();
             connectTimeout = 10_000;
             readTimeout = 10_000;

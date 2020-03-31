@@ -3,23 +3,48 @@ package com.example.ayhttp;
 public class Request {
 
     final Headers headers;
-    String[] request;
+    final String protocol;
+    final String url;
+    final String type;
+    final int port;
 
-    private Request(Headers headers){
-        this.headers = headers;
+    private Request(Builder builder){
+        this.headers = builder.headers;
+        this.protocol = builder.protocol;
+        this.url = builder.url;
+        this.type = builder.type;
+        this.port = builder.port;
     }
 
     String header(String key) {
         return headers.headers.get(key);
     }
 
+    Builder newBuilder() {
+        return new Builder(this);
+    }
 
-    public class Builder{
 
-        private Headers header;
+    public static class Builder{
+
+        private Headers headers;
         private String url;
         private int port = 80;
+        private String protocol = "HTTP_1_1";
         private String type = "GET";
+
+
+        public Builder(){
+            headers = new Headers();
+        }
+
+        Builder(Request request){
+            this.headers = request.headers;
+            this.protocol = request.protocol;
+            this.url = request.url;
+            this.type = request.type;
+            this.port = request.port;
+        }
 
         public Builder get(){
             type = "GET";
@@ -42,14 +67,12 @@ public class Request {
         }
 
         public Builder header(String key, String value){
-            if (header == null) header = new Headers(type, url, type, port);
-            header.addHeader(key, value);
+            headers.addHeader(key, value);
             return this;
         }
 
         public Request build(){
-            if (header == null) header = new Headers(type, url, type, port);
-            return new Request(header);
+            return new Request(this);
         }
     }
 }

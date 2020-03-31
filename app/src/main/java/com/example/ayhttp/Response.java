@@ -1,12 +1,14 @@
 package com.example.ayhttp;
 
-class Response {
+public class Response {
 
     final Request request;
     final Headers headers;
     final ResponseBody body;
     final int code;
     final String message;
+    final long sentRequestMillis;
+    final long currentTimeMillis;
 
 
     private Response(Builder builder){
@@ -15,12 +17,25 @@ class Response {
         this.code = builder.code;
         this.message = builder.message;
         this.headers = builder.headers;
+        this.sentRequestMillis = builder.sentRequestMillis;
+        this.currentTimeMillis = builder.currentTimeMillis;
     }
 
     Request request() {
         return request;
     }
 
+    public Builder newBuilder() {
+        return new Builder(this);
+    }
+
+    public ResponseBody body() {
+        return body;
+    }
+
+    public String message(){
+        return message;
+    }
 
 
 
@@ -35,7 +50,16 @@ class Response {
         int code = -1;
 
         Builder(){
+            headers = new Headers();
+        }
 
+        Builder(Response response){
+            this.request = response.request;
+            this.headers = response.headers;
+            this.body = response.body;
+            this.message = response.message;
+            this.sentRequestMillis = response.sentRequestMillis;
+            this.currentTimeMillis = response.currentTimeMillis;
         }
 
 
@@ -50,6 +74,11 @@ class Response {
 
         public Builder code(int code) {
             this.code = code;
+            return this;
+        }
+
+        public Builder body(ResponseBody body){
+            this.body = body;
             return this;
         }
 

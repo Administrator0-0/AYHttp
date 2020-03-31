@@ -20,6 +20,7 @@ class Connection {
         try {
             connectSocket(connectTimeout, readTimeout);
         }catch (IOException e){
+            e.printStackTrace();
             close(socket);
             socket = null;
         }

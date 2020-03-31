@@ -51,7 +51,7 @@ class Chain {
             throw new IndexOutOfBoundsException("index >= interceptors'size");
 
         Chain next = new Chain(interceptors, httpCodec, index + 1, request, call, connection,
-                null, connectTimeout, readTimeout, writeTimeout);
+                streamAllocation, connectTimeout, readTimeout, writeTimeout);
         Interceptor interceptor = interceptors.get(index);
         Response response = interceptor.intercept(next);
         if (response == null) throw new NullPointerException("Interceptor" + interceptor +

@@ -1,29 +1,29 @@
 package com.example.ayhttp;
 
-import java.net.SocketAddress;
 import java.util.HashMap;
 
 class Headers {
-    String protocol;
-    String url;
-    String type;
-    int port;
-    SocketAddress address;
+
     HashMap<String, String> headers = new HashMap<>();
-
-    Headers(){
-
-    }
-
-    Headers(String protocol, String url, String type, int port){
-        this.protocol = protocol;
-        this.url = url;
-        this.type = type;
-        this.port = port;
-    }
 
     void addHeader(String key, String value){
         headers.put(key, value);
+    }
+
+    Headers addLenient(String line){
+        int index = line.indexOf(":", 1);
+        if (index != -1){
+            return addLenient(line.substring(0, index), line.substring(index));
+        }else if (line.startsWith(":")){
+            return addLenient("", line.substring(1));
+        }else {
+            return addLenient("", line);
+        }
+    }
+
+    Headers addLenient(String key, String value){
+        headers.put(key, value);
+        return this;
     }
 
 

@@ -18,7 +18,7 @@ class HttpCodec {
     private InputStream in;
     private OutputStream out;
     private boolean closed;
-    int state = STATE_IDLE;
+    private int state = STATE_IDLE;
     private int headerLimit = 256 * 1024;
 
     HttpCodec(InputStream in, OutputStream out){
@@ -28,20 +28,16 @@ class HttpCodec {
 
     void writeRequest(Request request) throws IOException {
         ArrayList<String> strings = new ArrayList<>();
-        strings.add(request.headers.type + " / " + "HTTP/1.1\r\n");
+        strings.add(request.type + " / " + "HTTP/1.1\r\n");
         for (HashMap.Entry entry : request.headers.headers.entrySet()){
             strings.add(entry.getKey() +  ": " + entry.getValue() + "\r\n");
         }
-        strings.add("Host: " + request.headers.url + "\r\n");
+        strings.add("Host: " + request.url + "\r\n");
         strings.add("\r\n");
-        int count = 0;
-        for (String str : strings){
-            request.request[count] = str;
-            count++;
-        }
         for (String s : strings){
             out.write(s.getBytes());
         }
+        out.flush();
         state = STATE_OPEN_REQUEST_BODY;
     }
 
@@ -53,7 +49,8 @@ class HttpCodec {
             StatusLine statusLine = StatusLine.parse(readHeaderLine());
             Response.Builder builder = new Response.Builder()
                     .code(statusLine.code)
-                    .message(statusLine.message);
+                    .message(statusLine.message)
+                    .headers(readHeaders());
             if (expectContinue && statusLine.code == 100) {
                 return null;
             }else if (statusLine.code == 100){
@@ -68,13 +65,27 @@ class HttpCodec {
         return null;
     }
 
-//    ResponseBody openResponseBody(Response response){
-//        String contentType = response.
-//    }
+    ResponseBody openResponseBody(Response response){
+        String contentType = response.headers.headers.get("Content-Type");
+        if (response.headers.headers.get("Transfer-Encoding") != null &&
+                response.headers.headers.get("Transfer-Encoding")
+                        .equalsIgnoreCase("chunked")){
+            return new ResponseBody(in, contentType, -1L);
+        }
+        long contentLength = Util.stringToLong(response.headers.headers.get("Content-Length"));
+        if (contentLength != -1){
+            return new ResponseBody(in, contentType, contentLength);
+        }
+        return new ResponseBody(in, contentType, -1L);
+    }
 
-//    private Headers readHeaders(){
-//        Headers headers = new Headers();
-//    }
+    private Headers readHeaders() throws IOException {
+        Headers headers = new Headers();
+        for (String line ; (line = readHeaderLine()).length() != 0; ){
+            headers.addLenient(line);
+        }
+        return headers;
+    }
 
     private String readHeaderLine() throws IOException {
         String line = Util.readUtf8Line(in, headerLimit);

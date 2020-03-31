@@ -1,15 +1,17 @@
 package com.example.ayhttp;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-public class Util {
+class Util {
 
 
-    public static ThreadFactory threadFactory(final String name, final boolean daemon) {
+    static ThreadFactory threadFactory(final String name, final boolean daemon) {
         return new ThreadFactory() {
             @Override public Thread newThread(Runnable runnable) {
                 Thread result = new Thread(runnable, name);
@@ -19,13 +21,22 @@ public class Util {
         };
     }
 
-    public static int getDuration(String name, long duration, TimeUnit unit){
+    static int getDuration(String name, long duration, TimeUnit unit){
         if (duration < 0) throw new IllegalArgumentException(name + "< 0");
         if (unit == null) throw new NullPointerException("TimeUnit is null");
         long mills = unit.toMillis(duration);
         if (mills > Integer.MAX_VALUE) throw new IllegalArgumentException(name + "is too large");
         if (mills == 0 && duration > 0) throw new IllegalArgumentException(name + "is too small");
         return (int)mills;
+    }
+
+    static long stringToLong(String s) {
+        if (s == null) return -1;
+        try {
+            return Long.parseLong(s);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 
     static String readUtf8Line(InputStream in, int limit) throws IOException {
@@ -42,6 +53,11 @@ public class Util {
                 } else {
                     break;
                 }
+                if (in.available() <= 0){
+                    Log.d("aaa", "readUtf8Line: break");
+                    break;
+                }
+                Log.d("aaa", "readUtf8Line: "+len);
                 builder.append(new String(b, 0, len, "UTF-8"));
                 count += len;
             }catch (SocketTimeoutException e){
@@ -53,6 +69,7 @@ public class Util {
         for (String s : temp){
             builder2.append(s);
         }
+        Log.d("aaa", "readUtf8Line: "+builder2.toString().length());
         return builder2.toString();
     }
 }

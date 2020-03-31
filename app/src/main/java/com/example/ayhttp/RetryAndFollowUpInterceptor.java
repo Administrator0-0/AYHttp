@@ -16,7 +16,7 @@ class RetryAndFollowUpInterceptor implements Interceptor{
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
         StreamAllocation streamAllocation = new StreamAllocation(client.connectionPool,
-                new InetSocketAddress(request.headers.url, request.headers.port));
+                new InetSocketAddress(request.url, request.port));
         return chain.proceed(request, null, streamAllocation, null);
     }
 }

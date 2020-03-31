@@ -28,7 +28,7 @@ class Dispatcher {
     synchronized void enqueue(AsyncCall call){
         if (runningAsyncCalls.size() < maxRequests){
             runningAsyncCalls.add(call);
-            executorService.execute(call);
+            executorService().execute(call);
         }else {
             readyAsyncCalls.add(call);
         }
