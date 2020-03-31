@@ -4,15 +4,21 @@ import java.net.SocketAddress;
 import java.util.HashMap;
 
 class Headers {
-    String type;
+    String protocol;
     String url;
+    String type;
     int port;
     SocketAddress address;
     HashMap<String, String> headers = new HashMap<>();
 
-    Headers(String type, String url, int port){
-        this.type = type;
+    Headers(){
+
+    }
+
+    Headers(String protocol, String url, String type, int port){
+        this.protocol = protocol;
         this.url = url;
+        this.type = type;
         this.port = port;
     }
 

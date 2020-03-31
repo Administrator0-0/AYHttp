@@ -2,11 +2,15 @@ package com.example.ayhttp;
 
 public class Request {
 
-    final Headers header;
+    final Headers headers;
     String[] request;
 
-    private Request(Headers header){
-        this.header = header;
+    private Request(Headers headers){
+        this.headers = headers;
+    }
+
+    String header(String key) {
+        return headers.headers.get(key);
     }
 
 
@@ -38,13 +42,13 @@ public class Request {
         }
 
         public Builder header(String key, String value){
-            if (header == null) header = new Headers(type, url, port);
+            if (header == null) header = new Headers(type, url, type, port);
             header.addHeader(key, value);
             return this;
         }
 
         public Request build(){
-            if (header == null) header = new Headers(type, url, port);
+            if (header == null) header = new Headers(type, url, type, port);
             return new Request(header);
         }
     }
