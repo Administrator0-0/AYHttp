@@ -5,11 +5,14 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
+import java.util.LinkedList;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 class Util {
 
+
+    private static LinkedList<byte[]>bufferPool = new LinkedList<>();
 
     static ThreadFactory threadFactory(final String name, final boolean daemon) {
         return new ThreadFactory() {
@@ -53,14 +56,11 @@ class Util {
                 } else {
                     break;
                 }
-                if (in.available() <= 0){
-                    Log.d("aaa", "readUtf8Line: break");
-                    break;
-                }
-                Log.d("aaa", "readUtf8Line: "+len);
+                bufferPool.add(b);
                 builder.append(new String(b, 0, len, "UTF-8"));
                 count += len;
             }catch (SocketTimeoutException e){
+                e.printStackTrace();
                 break;
             }
         }
